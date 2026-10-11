@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>אזור המנויות | מועדון לילו</title>
+  <link rel="icon" type="image/svg+xml" href="https://liloubooks.com/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/academy.css">
+  <style>
+    .panel { background: var(--paper); border: 1px solid var(--line); border-radius: 18px; padding: 22px; margin-bottom: 18px; }
+    .warn { background: #fff4e5; border-color: #f0c98a; }
+    .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 28px 0 18px; }
+    .tabs button { font-family: inherit; font-size: .95rem; border: 1px solid var(--line); background: var(--paper); color: var(--warm-brown); padding: 7px 16px; border-radius: 50px; cursor: pointer; }
+    .tabs button[aria-pressed="true"] { background: var(--warm-brown); color: #fff; border-color: var(--warm-brown); }
+    .item { background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+    .item .meta { font-size: .85rem; color: var(--light-text); display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+    .item .video { margin-top: 14px; }
+    .item .actions { margin-top: 14px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .state { text-align: center; padding: 60px 0; }
+    .state form { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 460px; margin: 20px auto 0; }
+    .state input { flex: 1 1 220px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 50px; font: inherit; }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap-wide">
+    <a class="brand latin" href="/">Lilou Club</a>
+    <nav><a class="keep" id="wa-help" href="#" target="_blank" rel="noopener">עזרה בוואטסאפ</a></nav>
+  </div>
+</header>
+
+<main class="wrap" style="padding-top:36px;padding-bottom:40px">
+  <div id="loading" class="state"><p class="lead">טוענת את התוכן שלך...</p></div>
+
+  <!-- No personal link (or a wrong one): ask for the email and send the link again -->
+  <div id="need-link" class="state" hidden>
+    <h1>אזור המנויות</h1>
+    <p class="lead">הכניסה היא דרך הקישור האישי שנשלח אלייך במייל.<br>לא מוצאת אותו? הזיני את המייל שאיתו הצטרפת, ונשלח אותו שוב.</p>
+    <form id="resend-form">
+      <input type="email" name="email" placeholder="המייל שלך" required dir="ltr" aria-label="מייל">
+      <button class="btn small" type="submit">שלחו לי את הקישור</button>
+    </form>
+    <p id="resend-msg" style="margin-top:14px;font-weight:700"></p>
+    <p style="margin-top:30px">עוד לא במועדון? <a href="/">החודש הראשון בשקל</a></p>
+  </div>
+
+  <div id="cancelled" class="state" hidden>
+    <h1>המנוי שלך הסתיים</h1>
+    <p class="lead">היה כיף לקפל איתך 💛 רוצה לחזור? הדלת תמיד פתוחה.</p>
+    <a class="btn" href="/" style="margin-top:16px">חזרה למועדון</a>
+  </div>
+
+  <div id="app" hidden>
+    <span class="eyebrow">אזור המנויות</span>
+    <h1 id="hello">ברוכה הבאה</h1>
+
+    <div id="pay-warn" class="panel warn" hidden>
+      <strong>החיוב החודשי האחרון לא עבר.</strong> כדי שהגישה לא תיעצר, <a id="pay-wa" href="#" target="_blank" rel="noopener">כתבי לי בוואטסאפ</a> ואשלח קישור לעדכון פרטי התשלום.
+    </div>
+
+    <div class="panel" id="live-box" hidden>
+      <div class="row">
+        <div>
+          <h3>🎥 מפגש הלייב הבא</h3>
+          <p id="live-when"></p>
+          <p id="live-note" style="color:var(--light-text);font-size:.95rem"></p>
+        </div>
+        <a class="btn small" id="zoom" href="#" target="_blank" rel="noopener" hidden>כניסה לזום</a>
+      </div>
+    </div>
+
+    <div class="panel" id="wa-box" hidden>
+      <div class="row">
+        <div><h3>💬 קבוצת הוואטסאפ של המועדון</h3><p>משתפות, שואלות ומתרגשות יחד.</p></div>
+        <a class="btn small secondary" id="wa-group" href="#" target="_blank" rel="noopener">להצטרפות לקבוצה</a>
+      </div>
+    </div>
+
+    <div class="tabs" id="tabs" role="toolbar" aria-label="סינון תוכן"></div>
+    <div id="items"></div>
+    <p id="empty" class="center lead" hidden>התוכן הראשון בדרך 🙂</p>
+  </div>
+</main>
+
+<footer>
+  <p>התוכן מיועד למנויות המועדון בלבד. נא לא לשתף את הקישור האישי. תודה 🙏</p>
+  <p>Lilou Books · <a href="mailto:liloubooks.com@gmail.com">liloubooks.com@gmail.com</a></p>
+</footer>
+
+<script>
+// ===== Settings =====
+// The Apps Script web app URL (ends with /exec). See 02-מדריך-הקמת-המערכת.md in the project folder
+var CLUB_API = '';
+var WHATSAPP = '972502534643';
+// ====================
+
+(function () {
+  var KEY = 'lilou-club-access';
+  var $ = function (id) { return document.getElementById(id); };
+  var wa = function (text) { return 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(text); };
+  $('wa-help').href = wa('היי להב, אני מנויה במועדון ויש לי שאלה');
+
+  // Personal link: ?e=<email>&k=<key>. Remember it on this device so the next visit works without the email.
+  var q = new URLSearchParams(location.search);
+  var access = null;
+  if (q.get('e') && q.get('k')) {
+    access = { e: q.get('e'), k: q.get('k') };
+    try { localStorage.setItem(KEY, JSON.stringify(access)); } catch (err) {}
+    history.replaceState(null, '', location.pathname);
+  } else {
+    try { access = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (err) {}
+  }
+
+  function show(id) {
+    ['loading', 'need-link', 'cancelled', 'app'].forEach(function (x) { $(x).hidden = x !== id; });
+  }
+
+  $('resend-form').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var email = this.email.value.trim();
+    var msg = $('resend-msg');
+    if (!CLUB_API) { msg.textContent = 'כתבי לי בוואטסאפ ואשלח לך את הקישור.'; return; }
+    msg.textContent = 'שולחת...';
+    fetch(CLUB_API + '?action=resend&e=' + encodeURIComponent(email))
+      .then(function () { msg.textContent = 'אם המייל רשום במועדון, הקישור בדרך אלייך 💌 (כדאי לבדוק גם בספאם)'; })
+      .catch(function () { msg.textContent = 'משהו השתבש. נסי שוב בעוד רגע, או כתבי לי בוואטסאפ.'; });
+  });
+
+  if (!access || !CLUB_API) { show('need-link'); return; }
+
+  fetch(CLUB_API + '?action=content&e=' + encodeURIComponent(access.e) + '&k=' + encodeURIComponent(access.k))
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      if (!data.ok) {
+        if (data.reason === 'cancelled') { show('cancelled'); return; }
+        try { localStorage.removeItem(KEY); } catch (err) {}
+        show('need-link'); return;
+      }
+      render(data);
+      show('app');
+    })
+    .catch(function () {
+      show('need-link');
+      $('resend-msg').textContent = 'לא הצלחנו לטעון את התוכן כרגע. נסי לרענן בעוד רגע.';
+    });
+
+  function youtubeId(v) {
+    if (!v) return '';
+    var m = v.match(/(?:youtu\.be\/|v=|embed\/|shorts\/|live\/)([\w-]{11})/);
+    return m ? m[1] : (/^[\w-]{11}$/.test(v) ? v : '');
+  }
+
+  function render(data) {
+    $('hello').textContent = data.name ? 'היי ' + data.name + ', ברוכה הבאה 💛' : 'ברוכה הבאה 💛';
+    if (data.paymentProblem) { $('pay-warn').hidden = false; $('pay-wa').href = wa('היי להב, החיוב של המועדון לא עבר, אשמח לקישור לעדכון פרטים'); }
+    if (data.live && data.live.when) {
+      $('live-box').hidden = false;
+      $('live-when').textContent = data.live.when;
+      $('live-note').textContent = data.live.recordingsNote || '';
+      if (data.live.zoom) { $('zoom').hidden = false; $('zoom').href = data.live.zoom; }
+    }
+    if (data.whatsapp) { $('wa-box').hidden = false; $('wa-group').href = data.whatsapp; }
+
+    var items = data.items || [];
+    if (!items.length) { $('empty').hidden = false; return; }
+
+    var cats = ['הכול'];
+    items.forEach(function (it) { if (it.category && cats.indexOf(it.category) === -1) cats.push(it.category); });
+    var current = 'הכול';
+    cats.forEach(function (c) {
+      var b = document.createElement('button'); b.type = 'button'; b.textContent = c;
+      b.setAttribute('aria-pressed', c === current);
+      b.addEventListener('click', function () {
+        current = c;
+        $('tabs').querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x.textContent === c); });
+        draw();
+      });
+      $('tabs').appendChild(b);
+    });
+
+    function draw() {
+      var box = $('items'); box.innerHTML = '';
+      items.filter(function (it) { return current === 'הכול' || it.category === current; }).forEach(function (it) {
+        var d = document.createElement('article'); d.className = 'item';
+        var meta = document.createElement('div'); meta.className = 'meta';
+        [it.category, it.level, it.date].forEach(function (t) { if (t) { var s = document.createElement('span'); s.textContent = t; meta.appendChild(s); } });
+        var h = document.createElement('h3'); h.textContent = it.title;
+        d.appendChild(meta); d.appendChild(h);
+        if (it.description) { var p = document.createElement('p'); p.textContent = it.description; d.appendChild(p); }
+        var yt = youtubeId(it.video);
+        if (yt) {
+          var v = document.createElement('div'); v.className = 'video';
+          var f = document.createElement('iframe');
+          f.src = 'https://www.youtube-nocookie.com/embed/' + yt + '?rel=0';
+          f.allow = 'accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen';
+          f.loading = 'lazy'; f.title = it.title;
+          v.appendChild(f); d.appendChild(v);
+        }
+        var actions = document.createElement('div'); actions.className = 'actions';
+        if (it.pdf) { var a = document.createElement('a'); a.className = 'btn small'; a.href = it.pdf; a.target = '_blank'; a.rel = 'noopener'; a.textContent = '⬇ להורדת התבנית'; actions.appendChild(a); }
+        if (it.video && !yt) { var l = document.createElement('a'); l.className = 'btn small secondary'; l.href = it.video; l.target = '_blank'; l.rel = 'noopener'; l.textContent = '▶ לצפייה'; actions.appendChild(l); }
+        if (actions.children.length) d.appendChild(actions);
+        box.appendChild(d);
+      });
+    }
+    draw();
+  }
+})();
+</script>
+</body>
+</html>
